@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5BD51F9C-08EA-47CC-AC9B-6EBBE6993F18}</ProjectGuid>
+    <ProjectGuid>{A12D4C6C-FC78-4BDE-8A85-4E8D652AE3E5}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>FormeleMethoden</RootNamespace>
-    <AssemblyName>FormeleMethoden</AssemblyName>
+    <RootNamespace>FormeleMethodenCS</RootNamespace>
+    <AssemblyName>FormeleMethodenCS</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Automata.cs" />
+    <Compile Include="DFA.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transition.cs" />

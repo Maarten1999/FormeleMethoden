@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FormeleMethoden
+namespace FormeleMethodenCS
 {
-    public class Transition<T> : IComparable<Transition<T>> where T : IComparable 
+    class Transition<T> : IComparable<Transition<T>> where T : IComparable
     {
-        public static readonly char EPSILON = '$';
+        public static readonly char EPSILON = 'ε';
 
         public T SourceState { get; private set; }
         public T DestState { get; private set; }
@@ -23,7 +23,6 @@ namespace FormeleMethoden
             this.DestState = destination;
         }
 
-
         public int CompareTo(Transition<T> other)
         {
             int sourceCompare = SourceState.CompareTo(other.SourceState);
@@ -31,11 +30,6 @@ namespace FormeleMethoden
             int destCompare = DestState.CompareTo(other.DestState);
 
             return (sourceCompare != 0 ? sourceCompare : (symbolCompare != 0 ? symbolCompare : destCompare));
-        }
-
-        public override string ToString()
-        {
-            return $"({SourceState}, {Symbol}) --> {DestState}";
         }
 
         public override bool Equals(object obj)
@@ -47,10 +41,13 @@ namespace FormeleMethoden
             return (this.SourceState.Equals(t.SourceState) && this.DestState.Equals(t.DestState)
                 && this.Symbol == t.Symbol);
         }
-
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+        public override string ToString()
+        {
+            return $"({SourceState}, {Symbol}) --> {DestState}";
         }
     }
 }
