@@ -4,23 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FormeleMethoden
+namespace FormeleMethodenCS
 {
-    public class Automata<T> where T : IComparable
+    class DFA<T> where T : IComparable
     {
+        //public T startState;
+        //public SortedSet<T> finalStates;
+        //public SortedList<KeyValuePair<T, char>, T> transTable;
         private readonly List<Transition<T>> transitions;
         private readonly SortedSet<T> states;
-        private readonly SortedSet<T> startStates;
+        private T startState;
         private readonly SortedSet<T> finalStates;
         private SortedSet<char> symbols;
 
-        public Automata() : this(new SortedSet<char>()) { }
-        public Automata(char[] symbols) : this(new SortedSet<char>(symbols)) { }
-        public Automata(SortedSet<char> symbols)
+        public DFA() : this(new SortedSet<char>()) { }
+        public DFA(char[] symbols) : this(new SortedSet<char>(symbols)) { }
+        public DFA(SortedSet<char> symbols)
         {
             transitions = new List<Transition<T>>();
             states = new SortedSet<T>();
-            startStates = new SortedSet<T>();
             finalStates = new SortedSet<T>();
             SetAlphabet(symbols);
         }
@@ -28,11 +30,6 @@ namespace FormeleMethoden
         private void SetAlphabet(SortedSet<char> symbols)
         {
             this.symbols = symbols;
-        }
-
-        private void SetAlphabet(char[] symbols)
-        {
-            this.symbols = new SortedSet<char>(symbols);
         }
 
         public void AddTransition(Transition<T> t)
@@ -45,7 +42,7 @@ namespace FormeleMethoden
         public void DefineAsStartState(T t)
         {
             states.Add(t);
-            startStates.Add(t);
+            startState = t;
         }
 
         public void DefineAsFinalState(T t)
@@ -53,7 +50,6 @@ namespace FormeleMethoden
             states.Add(t);
             finalStates.Add(t);
         }
-
         public void PrintTransitions()
         {
             foreach (var t in transitions)
@@ -62,19 +58,22 @@ namespace FormeleMethoden
             }
         }
 
-        public bool IsDFA()
+        public bool Accept(string s)
         {
-            bool dfa = true;
+            T curState = startState;
 
-            foreach (T state in states)
+            CharEnumerator i = s.GetEnumerator();
+
+            foreach (char c in s)
             {
-                foreach (char s in symbols)
-                {
-                    dfa = dfa && GetToStates(state, s).Count() == 1;
-                } // Kan eerder returned worden?
+                var transition = transitions.Find(t => t.SourceState.Equals(curState) && t.Symbol == c);
+                if (transition == null)
+                    return false;
+                curState = transition.DestState;
             }
 
-            return dfa;
+
+            return finalStates.Contains(curState);
         }
 
         public IEnumerable<T> GetToStates(T source, char symbol)

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormeleMethoden", "FormeleMethoden\FormeleMethoden.csproj", "{5BD51F9C-08EA-47CC-AC9B-6EBBE6993F18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormeleMethodenCS", "FormeleMethodenCS\FormeleMethodenCS.csproj", "{A12D4C6C-FC78-4BDE-8A85-4E8D652AE3E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5BD51F9C-08EA-47CC-AC9B-6EBBE6993F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5BD51F9C-08EA-47CC-AC9B-6EBBE6993F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5BD51F9C-08EA-47CC-AC9B-6EBBE6993F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5BD51F9C-08EA-47CC-AC9B-6EBBE6993F18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A12D4C6C-FC78-4BDE-8A85-4E8D652AE3E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A12D4C6C-FC78-4BDE-8A85-4E8D652AE3E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A12D4C6C-FC78-4BDE-8A85-4E8D652AE3E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A12D4C6C-FC78-4BDE-8A85-4E8D652AE3E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {506D537F-314A-4232-9674-CFB121E3D708}
+		SolutionGuid = {F00AC3E3-43F2-4638-BE2A-D579D810E9BF}
 	EndGlobalSection
 EndGlobal
