@@ -47,7 +47,6 @@
     <Compile Include="NDFA.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IAutomata.cs" />
     <Compile Include="Transition.cs" />
   </ItemGroup>
   <ItemGroup>
