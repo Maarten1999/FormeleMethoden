@@ -36,17 +36,20 @@ namespace FormeleMethodenCS
 
             dfa.DefineAsStartState("q0");
             dfa.DefineAsFinalState("q6");
-            //dfa.PrintTransitions();
-
-            do
-            {
-                Console.Clear();
-                Console.Write("Geef string: ");
-                string s = Console.ReadLine();
-                bool success = dfa.Accept(s);
-                Console.WriteLine($"String geaccepteerd: {success}");
-                Console.WriteLine("Druk op esc om te stoppen.");
-            } while (Console.ReadKey().Key != ConsoleKey.Escape);
+            
+            List<string> words = dfa.GetLanguage(6, false).ToList();//dfa.GetLanguage(2);
+            Console.WriteLine($"Number of combinations: {words.Count()}");
+            words.ForEach(w => Console.WriteLine(w));
+            Console.ReadLine();
+            //do
+            //{
+            //    Console.Clear();
+            //    Console.Write("Geef string: ");
+            //    string s = Console.ReadLine();
+            //    bool success = dfa.Accept(s);
+            //    Console.WriteLine($"String geaccepteerd: {success}");
+            //    Console.WriteLine("Druk op esc om te stoppen.");
+            //} while (Console.ReadKey().Key != ConsoleKey.Escape);
             
 
             
