@@ -12,7 +12,7 @@ namespace FormeleMethodenCS
         {
             char[] alphabet = { 'a', 'b' };
 
-            DFA<string> dfa = new DFA<string>(alphabet);
+            Automata<string> dfa = new DFA<string>(alphabet);
             dfa.AddTransition(new Transition<string>("q0", 'a', "q1"));
             dfa.AddTransition(new Transition<string>("q0", 'b', "q3"));
 
@@ -37,22 +37,22 @@ namespace FormeleMethodenCS
             dfa.DefineAsStartState("q0");
             dfa.DefineAsFinalState("q6");
 
-            Graphiz graphiz = new Graphiz(dfa);
+            Graphiz<string> graphiz = new Graphiz<string>(dfa);
             graphiz.PrintGraph();
             
             List<string> words = dfa.GetLanguage(6, true).ToList();//dfa.GetLanguage(2);
             Console.WriteLine($"Number of combinations: {words.Count()}");
             words.ForEach(w => Console.WriteLine(w));
             Console.ReadLine();
-            //do
-            //{
-            //    Console.Clear();
-            //    Console.Write("Geef string: ");
-            //    string s = Console.ReadLine();
-            //    bool success = dfa.Accept(s);
-            //    Console.WriteLine($"String geaccepteerd: {success}");
-            //    Console.WriteLine("Druk op esc om te stoppen.");
-            //} while (Console.ReadKey().Key != ConsoleKey.Escape);
+            do
+            {
+                Console.Clear();
+                Console.Write("Geef string: ");
+                string s = Console.ReadLine();
+                bool success = dfa.Accept(s);
+                Console.WriteLine($"String geaccepteerd: {success}");
+                Console.WriteLine("Druk op esc om te stoppen.");
+            } while (Console.ReadKey().Key != ConsoleKey.Escape);
 
 
 
