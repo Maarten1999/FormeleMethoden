@@ -45,9 +45,11 @@
   <ItemGroup>
     <Compile Include="DFA.cs" />
     <Compile Include="Graphiz.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="NDFA.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegExp.cs" />
     <Compile Include="Transition.cs" />
   </ItemGroup>
   <ItemGroup>
