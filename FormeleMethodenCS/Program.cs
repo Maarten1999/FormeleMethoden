@@ -36,8 +36,11 @@ namespace FormeleMethodenCS
 
             dfa.DefineAsStartState("q0");
             dfa.DefineAsFinalState("q6");
+
+            Graphiz graphiz = new Graphiz(dfa);
+            graphiz.PrintGraph();
             
-            List<string> words = dfa.GetLanguage(6, false).ToList();//dfa.GetLanguage(2);
+            List<string> words = dfa.GetLanguage(6, true).ToList();//dfa.GetLanguage(2);
             Console.WriteLine($"Number of combinations: {words.Count()}");
             words.ForEach(w => Console.WriteLine(w));
             Console.ReadLine();
@@ -50,9 +53,9 @@ namespace FormeleMethodenCS
             //    Console.WriteLine($"String geaccepteerd: {success}");
             //    Console.WriteLine("Druk op esc om te stoppen.");
             //} while (Console.ReadKey().Key != ConsoleKey.Escape);
-            
 
-            
+
+
             //var x = dfa.GetToStates("q4", 'a');
             //foreach (var i in x)
             //{

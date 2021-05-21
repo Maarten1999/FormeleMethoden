@@ -11,10 +11,10 @@ namespace FormeleMethodenCS
         //public T startState;
         //public SortedSet<T> finalStates;
         //public SortedList<KeyValuePair<T, char>, T> transTable;
-        private readonly List<Transition<T>> transitions;
-        private readonly SortedSet<T> states;
-        private T startState;
-        private readonly SortedSet<T> finalStates;
+        public readonly List<Transition<T>> transitions;
+        public readonly SortedSet<T> states;
+        public T startState;
+        public readonly SortedSet<T> finalStates;
         private SortedSet<char> symbols;
 
         public DFA() : this(new SortedSet<char>()) { }
