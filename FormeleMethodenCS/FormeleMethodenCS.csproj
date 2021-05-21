@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automata.cs" />
     <Compile Include="DFA.cs" />
     <Compile Include="Graphiz.cs" />
     <Compile Include="ExtensionMethods.cs" />

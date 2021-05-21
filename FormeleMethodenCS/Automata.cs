@@ -6,53 +6,76 @@ using System.Threading.Tasks;
 
 namespace FormeleMethodenCS
 {
-    abstract class Automata<T> where T : IComparable
+    public abstract class Automata<T> where T : IComparable
     {
-        protected readonly List<Transition<T>> transitions;
-        protected readonly SortedSet<T> states;
-        protected readonly SortedSet<T> finalStates;
+        public List<Transition<T>> Transitions { get; protected set; }
+        //protected List<Transition<T>> transitions;
+        public SortedSet<T> States { get; protected set; }
+        //protected SortedSet<T> states;
+        public SortedSet<T> StartStates { get; protected set; }
+
+        public SortedSet<T> FinalStates { get; protected set; }
+        //protected SortedSet<T> finalStates;
 
         protected SortedSet<char> symbols;
-        protected void SetAlphabet(SortedSet<char> symbols)
+
+        public Automata() : this(new SortedSet<char>()) { }
+        public Automata(char[] symbols) : this(new SortedSet<char>(symbols)) { }
+        public Automata(SortedSet<char> symbols)
         {
-            this.symbols = symbols;
-        }
-        public void AddTransition(Transition<T> t)
-        {
-            transitions.Add(t);
-            states.Add(t.SourceState);
-            states.Add(t.DestState);
+            Transitions = new List<Transition<T>>();
+            States = new SortedSet<T>();
+            FinalStates = new SortedSet<T>();
+            StartStates = new SortedSet<T>();
+            SetAlphabet(symbols);
         }
 
         public abstract void DefineAsStartState(T t);
 
+        public abstract bool Accept(string s);
+
+        protected void SetAlphabet(SortedSet<char> symbols)
+        {
+            this.symbols = symbols;
+        }
+
+        public void AddTransition(Transition<T> t)
+        {
+            Transitions.Add(t);
+            States.Add(t.SourceState);
+            States.Add(t.DestState);
+        }
+
         public void DefineAsFinalState(T t)
         {
-            states.Add(t);
-            finalStates.Add(t);
+            States.Add(t);
+            FinalStates.Add(t);
         }
+
         public void PrintTransitions()
         {
-            foreach (var t in transitions)
+            foreach (var t in Transitions)
             {
                 Console.WriteLine(t);
             }
         }
+
         public void PrintStates()
         {
-            states.ToList().ForEach(s => Console.WriteLine(s));
+            States.ToList().ForEach(s => Console.WriteLine(s));
         }
 
-        public abstract bool Accept(string s);
 
         public IEnumerable<T> GetToStates(T source, char symbol)
         {
-            foreach (Transition<T> transition in transitions)
+            foreach (Transition<T> transition in Transitions)
             {
-                if (transition.SourceState.Equals(source) && transition.Symbol.Equals(symbol))
+                if (transition.SourceState.Equals(source) && (transition.Symbol.Equals(symbol)
+                    || transition.Symbol.Equals(Transition<T>.EPSILON)))
                     yield return transition.DestState;
             }
         }
+
         /// <summary>
         /// Geeft alle mogelijke woorden met het alfabet en de ingegeven lengte.
         /// </summary>
