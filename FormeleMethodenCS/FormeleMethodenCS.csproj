@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Automata.cs" />
     <Compile Include="DFA.cs" />
+    <Compile Include="DFAGenerator.cs" />
     <Compile Include="Graphiz.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="NDFA.cs" />
