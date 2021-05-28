@@ -32,6 +32,8 @@ namespace FormeleMethodenCS
             RegExp result = new RegExp();
             result.@operator = Operator.PLUS;
             result.Left = this;
+            result.Terminals = this.Terminals + "+";
+
             return result;
         }
         public RegExp Star()
@@ -39,6 +41,7 @@ namespace FormeleMethodenCS
             RegExp result = new RegExp();
             result.@operator = Operator.STAR;
             result.Left = this;
+            result.Terminals = this.Terminals + "*";
             return result;
         }
 
@@ -48,6 +51,7 @@ namespace FormeleMethodenCS
             result.@operator = Operator.OR;
             result.Left = this;
             result.Right = regExp;
+            result.Terminals = this.Terminals + " | " + regExp.Terminals;
             return result;
         }
 
@@ -57,9 +61,15 @@ namespace FormeleMethodenCS
             result.@operator = Operator.DOT;
             result.Left = this;
             result.Right = regExp;
+            result.Terminals = this.Terminals + " " + regExp.Terminals;
             return result;
         }
 
+        public bool Accept(string s)
+        {
+            var set = GetLanguage(s.Length);
+            return set.Contains(s);
+        }
         public SortedSet<string> GetLanguage(int length)
         {
             SortedSet<string> emptyLanguage = new SortedSet<string>(new LengthComparer());
@@ -75,14 +85,14 @@ namespace FormeleMethodenCS
                     languageResult.Add(Terminals);
                     goto case Operator.OR;
                 case Operator.OR:
-                    languageLeft = Left.GetLanguage(length - 1) ?? emptyLanguage;
-                    languageRight = Right.GetLanguage(length - 1) ?? emptyLanguage;
+                    languageLeft = Left?.GetLanguage(length - 1) ?? emptyLanguage;
+                    languageRight = Right?.GetLanguage(length - 1) ?? emptyLanguage;
                     languageResult.AddAll(languageLeft);
                     languageResult.AddAll(languageRight);
                     break;
                 case Operator.STAR:
                 case Operator.PLUS:
-                    languageLeft = Left.GetLanguage(length - 1) ?? emptyLanguage;
+                    languageLeft = Left?.GetLanguage(length - 1) ?? emptyLanguage;
                     languageResult.AddAll(languageLeft);
                     for (int i = 1; i < length; i++)
                     {
@@ -97,8 +107,8 @@ namespace FormeleMethodenCS
                     }
                     break;
                 case Operator.DOT:
-                    languageLeft = Left.GetLanguage(length - 1) ?? emptyLanguage;
-                    languageRight = Right.GetLanguage(length - 1) ?? emptyLanguage;
+                    languageLeft = Left?.GetLanguage(length - 1) ?? emptyLanguage;
+                    languageRight = Right?.GetLanguage(length - 1) ?? emptyLanguage;
 
                     foreach (string a in languageLeft)
                         foreach (string b in languageRight)
@@ -107,9 +117,14 @@ namespace FormeleMethodenCS
                         }
                     break;              
                 default:
-                    break;
+                    throw new NotImplementedException("Operator not implemented.");
             }
             return languageResult;
+        }
+
+        public override string ToString()
+        {
+            return Terminals;
         }
         private class LengthComparer : IComparer<string>
         {
