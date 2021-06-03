@@ -10,10 +10,10 @@ namespace FormeleMethodenCS
     {
         static void Main(string[] args)
         {
-
-            TestRegex();
+            TestDFAGenerator();
+//            TestRegex();
             Console.ReadLine();
-
+            
             //var x = dfa.GetToStates("q4", 'a');
             //foreach (var i in x)
             //{
@@ -117,6 +117,17 @@ namespace FormeleMethodenCS
                 Console.WriteLine($"Accepts {expr3.ToString()} = {expr3.Accept(str)}");
             } while (str != "exit");
             
+        }
+
+        static void TestDFAGenerator()
+        {
+            string str = "bbabba";
+            DFA<string> dfa = DFAGenerator.EndsWith(str);
+
+            Graphiz<string> graphiz = new Graphiz<string>(dfa);
+            graphiz.PrintGraph();
+
+            Console.WriteLine("DFA Generated -> EndsWith: " + str);
         }
     }
 }
