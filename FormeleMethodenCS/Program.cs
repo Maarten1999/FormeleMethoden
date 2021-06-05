@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FormeleMethodenCS.Converters;
 
 namespace FormeleMethodenCS
 {
@@ -10,7 +11,7 @@ namespace FormeleMethodenCS
     {
         static void Main(string[] args)
         {
-            TestDFAGenerator();
+            TestThompsonConstruction();
 //            TestRegex();
             Console.ReadLine();
             
@@ -84,7 +85,7 @@ namespace FormeleMethodenCS
             RegExp all = (a.Or(b)).Star();
             // Expr4: " (baa | bb)+"
             RegExp expr4 = expr3.Plus();
-            // Expr5: "(baa | bb)+ (a|b)"
+            // Expr5: "(baa | bb)+ (a|b)*"
             RegExp expr5 = expr4.Dot(all);
 
             //Console.WriteLine("Taal van (baa):");
@@ -128,6 +129,33 @@ namespace FormeleMethodenCS
             graphiz.PrintGraph();
 
             Console.WriteLine("DFA Generated -> EndsWith: " + str);
+        }
+
+        static void TestThompsonConstruction()
+        {
+            RegExp a = new RegExp("a");
+            RegExp b = new RegExp("b");
+
+            // Expr1: "baa"
+            RegExp expr1 = new RegExp("baa");
+            // Expr2: "bb"
+            RegExp expr2 = new RegExp("bb");
+            // Expr3: "baa | bb"
+            RegExp expr3 = expr1.Or(expr2);
+
+            // All: " (a|b) *"
+            RegExp all = (a.Or(b)).Star();
+            // Expr4: " (baa | bb)+"
+            RegExp expr4 = expr3.Plus();
+            // Expr5: "(baa | bb)+ (a|b)*"
+            RegExp expr5 = expr4.Dot(all);
+
+            NDFA<string> ndfa = AutomataConverter.RegexToNDFA(expr5);
+
+            Graphiz<string> graphiz = new Graphiz<string>(ndfa);
+            graphiz.PrintGraph();
+
+            Console.WriteLine("Regex to NDFA: " + expr5.ToString());
         }
     }
 }

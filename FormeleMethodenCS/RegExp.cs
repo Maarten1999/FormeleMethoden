@@ -11,7 +11,7 @@ namespace FormeleMethodenCS
     {
         public enum Operator { PLUS, STAR, OR, DOT, ONE }
 
-        Operator @operator { get; set; }
+        public Operator @operator { get; set; }
         string Terminals { get; set; }
 
         public RegExp Left {get; set;}
