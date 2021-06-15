@@ -24,11 +24,12 @@ namespace FormeleMethodenCS
 
         // Print Graph to a .gv file
         // Run: 'dot -Tpng < dfa.gv > dfa.png' in CMD to generate PNG file
-        public bool PrintGraph()
+        public bool PrintGraph(string title = null)
         {
+            string graphTitle = (title is null) ? Title : title;
             List<string> lines = new List<string>(
                 new string[] {
-                    "digraph " + Title + " {",
+                    "digraph " + graphTitle + " {",
                     "rankdir = LR;"
             });
 
@@ -45,7 +46,7 @@ namespace FormeleMethodenCS
             lines.Add("}");
 
             Directory.CreateDirectory("graphiz");
-            File.WriteAllLines(Directory.GetCurrentDirectory() + "\\graphiz\\" + Title +".gv", lines.ToArray());
+            File.WriteAllLines(Directory.GetCurrentDirectory() + "\\graphiz\\" + graphTitle +".gv", lines.ToArray());
             return true;
         }
 

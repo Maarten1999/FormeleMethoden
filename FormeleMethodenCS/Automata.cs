@@ -17,7 +17,7 @@ namespace FormeleMethodenCS
         public SortedSet<T> FinalStates { get; protected set; }
         //protected SortedSet<T> finalStates;
 
-        protected SortedSet<char> symbols;
+        public SortedSet<char> symbols;
 
         public Automata() : this(new SortedSet<char>()) { }
         public Automata(char[] symbols) : this(new SortedSet<char>(symbols)) { }

@@ -19,8 +19,30 @@ namespace FormeleMethodenCS
 
         public static DFA<string> NDFAToDFA(NDFA<string> ndfa)
         {
-            // TODO uitwerken
-            return null;
+            NDFAToDFAConverter ndfaConverter = new NDFAToDFAConverter();
+            return ndfaConverter.Convert(ndfa);
+        }
+
+        public static NDFA<string> DFAToNDFA_Reverse(DFA<string> dfa)
+        {
+            NDFA<string> ndfa = new NDFA<string>(dfa.symbols);
+
+            foreach (var transition in dfa.Transitions)
+            {
+                ndfa.AddTransition(new Transition<string>(transition.DestState, transition.Symbol, transition.SourceState));
+            }
+
+            foreach (var dfaFinalState in dfa.FinalStates)
+            {
+                ndfa.DefineAsStartState(dfaFinalState);
+            }
+
+            foreach (var dfaStartState in dfa.StartStates)
+            {
+                ndfa.DefineAsFinalState(dfaStartState);
+            }
+
+            return ndfa;
         }
 
     }

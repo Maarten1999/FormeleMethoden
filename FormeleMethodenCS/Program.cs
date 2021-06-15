@@ -11,7 +11,7 @@ namespace FormeleMethodenCS
     {
         static void Main(string[] args)
         {
-            TestThompsonConstruction();
+            TestNDFAToDFA();
 //            TestRegex();
             Console.ReadLine();
             
@@ -156,6 +156,33 @@ namespace FormeleMethodenCS
             graphiz.PrintGraph();
 
             Console.WriteLine("Regex to NDFA: " + expr5.ToString());
+        }
+
+        static void TestNDFAToDFA()
+        {
+            char[] alphabet = { 'a', 'b' };
+
+            // Example from lesson 4:
+            NDFA<string> ndfa = new NDFA<string>(alphabet);
+            ndfa.AddTransition(new Transition<string>("q0", 'a', "q0"));
+            ndfa.AddTransition(new Transition<string>("q0", 'a', "q1"));
+            ndfa.AddTransition(new Transition<string>("q0", 'b', "q1"));
+
+            ndfa.AddTransition(new Transition<string>("q1", 'a', "q2"));
+            ndfa.AddTransition(new Transition<string>("q1", 'b', "q2"));
+            
+            ndfa.AddTransition(new Transition<string>("q2", 'a', "q2"));
+            ndfa.AddTransition(new Transition<string>("q2", 'a', "q0"));
+            
+            ndfa.DefineAsStartState("q0");
+            ndfa.DefineAsFinalState("q0");
+
+            DFA<string> dfa = AutomataConverter.NDFAToDFA(ndfa);
+
+            Graphiz<string> graphiz = new Graphiz<string>(dfa);
+            graphiz.PrintGraph();
+
+            Console.WriteLine("NDFA to DFA" );
         }
     }
 }

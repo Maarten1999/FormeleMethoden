@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Automata.cs" />
     <Compile Include="AutomataConverter.cs" />
+    <Compile Include="Converters\NDFAToDFAConverter.cs" />
     <Compile Include="Converters\ThompsonConstruction.cs" />
     <Compile Include="DFA.cs" />
     <Compile Include="DFAGenerator.cs" />
@@ -57,7 +58,9 @@
     <Compile Include="Transition.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
