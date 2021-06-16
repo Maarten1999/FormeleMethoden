@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FormeleMethodenCS.Converters
@@ -32,6 +33,7 @@ namespace FormeleMethodenCS.Converters
         private void handleBlackbox(BlackBox bbox)
         {
             List<BlackBox> boxs = new List<BlackBox>(2);
+            string str = null;
             switch (bbox.content.@operator)
             {
                 case RegExp.Operator.PLUS:
@@ -86,10 +88,17 @@ namespace FormeleMethodenCS.Converters
                 }
                 break;
 
-                default:
+                case RegExp.Operator.DOLLAR:
+                    str = bbox.content.Left.ToString();
+                    goto case RegExp.Operator.ONE;
+                case RegExp.Operator.CARET:
+                    str = bbox.content.Left.ToString();
+                    goto case RegExp.Operator.ONE;
+                case RegExp.Operator.ONE:
                 {
                     // Get terminals
-                    string str = bbox.content.ToString();
+                    if (str == null)
+                        str = bbox.content.ToString();
 
                     // First setup all states: e.g. bbab has 5 states
                     int[] states = new int[str.Length + 1];
@@ -107,6 +116,8 @@ namespace FormeleMethodenCS.Converters
                     }
                 }
                 break;
+                default:
+                    throw new NotImplementedException("Operator not implemented.");
             }
 
             foreach (var blackBox in boxs)

@@ -9,7 +9,7 @@ namespace FormeleMethodenCS
 {
     class RegExp
     {
-        public enum Operator { PLUS, STAR, OR, DOT, ONE }
+        public enum Operator { PLUS, STAR, OR, DOT, ONE, DOLLAR, CARET }
 
         public Operator @operator { get; set; }
         string Terminals { get; set; }
@@ -25,6 +25,24 @@ namespace FormeleMethodenCS
         public RegExp(string Terminals) : this()
         {
             this.Terminals = Terminals;
+        }
+
+        public RegExp Dollar()
+        {
+            RegExp result = new RegExp();
+            result.@operator = Operator.DOLLAR;
+            result.Left = this;
+            result.Terminals = this.Terminals + "$";
+            return result;
+        }
+
+        public RegExp Caret()
+        {
+            RegExp result = new RegExp();
+            result.@operator = Operator.CARET;
+            result.Left = this;
+            result.Terminals = "^" + this.Terminals;
+            return result;
         }
 
         public RegExp Plus()
@@ -81,7 +99,13 @@ namespace FormeleMethodenCS
             
             switch (@operator)
             {
-                case Operator.ONE:
+                case Operator.CARET:
+                    // TODO startswith
+                    break;
+                case Operator.DOLLAR:
+                    // TODO endswith
+                    break;
+                case Operator.ONE: // TODO check, is it working??
                     languageResult.Add(Terminals);
                     goto case Operator.OR;
                 case Operator.OR:

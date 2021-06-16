@@ -54,6 +54,7 @@
     <Compile Include="NDFA.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegExpGenerator.cs" />
     <Compile Include="RegExp.cs" />
     <Compile Include="Transition.cs" />
   </ItemGroup>
