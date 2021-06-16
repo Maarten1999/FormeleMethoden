@@ -18,13 +18,18 @@ namespace FormeleMethodenCS.Converters
 
             // Create initial situations with ndfa transitions
             List<Situation> baseSitus = new List<Situation>();
+            List<Situation> newSitus = new List<Situation>();
+
             foreach (var s in ndfa.States)
             {
                 Situation situ = new Situation(new SortedSet<string>(){s}, ndfa.symbols);
                 GetAllPaths(situ, ndfa.Transitions, s);
                 baseSitus.Add(situ);
 
-                Console.WriteLine(situ.ToString()); //debug
+                if (ndfa.StartStates.First() == s)
+                {
+                    newSitus.Add(situ);
+                }
             }
 
             // find transitions for all new states
@@ -33,23 +38,23 @@ namespace FormeleMethodenCS.Converters
             while (!AllStatesFound)
             {
                 AllStatesFound = true;
-                List<Situation> newSitus = new List<Situation>();
-                foreach (var situ in baseSitus)
+                List<Situation> tempSitus = new List<Situation>();
+                foreach (var situ in newSitus)
                 {
                     foreach (var pair in situ.combi)
                     {
-                        if (!SituationExists(pair.Value, baseSitus))
+                        if (!SituationExists(pair.Value, newSitus))
                         {
-                            newSitus.Add(FillNewSituation(new Situation(pair.Value, ndfa.symbols), baseSitus));
+                            tempSitus.Add(FillNewSituation(new Situation(pair.Value, ndfa.symbols), baseSitus));
                             AllStatesFound = false;
                         }
                     }
                 }
-                baseSitus.AddRange(newSitus);
+                newSitus.AddRange(tempSitus);
             }
 
             // create new DFA from situations
-            foreach (var situ in baseSitus)
+            foreach (var situ in newSitus)
             {
                 foreach (var pair in situ.combi)
                 {
@@ -94,10 +99,24 @@ namespace FormeleMethodenCS.Converters
                     else
                     {
                         situ.combi[ts.Symbol].Add(ts.DestState);
+                        // looking for epsilon in next state
+                        situ = CheckForEpsilons(situ, transitions, ts.DestState, ts.Symbol);
                     }
                 }
             }
 
+            return situ;
+        }
+
+        private Situation CheckForEpsilons(Situation situ, List<Transition<string>> transitions, string state, char symbol, int depth = 0)
+        {
+            Transition<string> ts = transitions.Find(ts1 =>
+                (ts1.SourceState == state) && (ts1.Symbol == Transition<string>.EPSILON));
+            if (ts != null && depth < 5)
+            {
+                situ.combi[symbol].Add(ts.DestState);
+                situ = CheckForEpsilons(situ, transitions, ts.DestState, symbol, depth++);
+            }
             return situ;
         }
 

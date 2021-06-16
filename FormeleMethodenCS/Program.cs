@@ -11,7 +11,7 @@ namespace FormeleMethodenCS
     {
         static void Main(string[] args)
         {
-            TestNDFAToDFA();
+            TestToMinimalDFA();
 //            TestRegex();
             Console.ReadLine();
             
@@ -183,6 +183,42 @@ namespace FormeleMethodenCS
             graphiz.PrintGraph();
 
             Console.WriteLine("NDFA to DFA" );
+        }
+
+        static void TestToMinimalDFA()
+        {
+            char[] alphabet = { 'a', 'b' };
+
+            NDFA<string> ndfa = new NDFA<string>(alphabet);
+            ndfa.AddTransition(new Transition<string>("q1", 'a', "q2"));
+            ndfa.AddTransition(new Transition<string>("q1", 'b', "q2"));
+            ndfa.AddTransition(new Transition<string>("q1", 'b', "q3"));
+
+            ndfa.AddTransition(new Transition<string>("q2", 'a', "q3"));
+            ndfa.AddTransition(new Transition<string>("q2", "q4"));
+            ndfa.AddTransition(new Transition<string>("q2", 'b', "q4"));
+
+            ndfa.AddTransition(new Transition<string>("q3", 'a', "q2"));
+
+            ndfa.AddTransition(new Transition<string>("q4", 'a', "q2"));
+            ndfa.AddTransition(new Transition<string>("q4", 'a', "q5"));
+
+            ndfa.AddTransition(new Transition<string>("q5", 'b', "q5"));
+            ndfa.AddTransition(new Transition<string>("q5", "q3"));
+
+            ndfa.DefineAsStartState("q1");
+            ndfa.DefineAsFinalState("q2");
+            ndfa.DefineAsFinalState("q3");
+
+            DFA<string> dfa = AutomataConverter.NDFAToDFA(ndfa);
+
+            Graphiz<string> graphiz = new Graphiz<string>(dfa);
+            graphiz.PrintGraph("dfa1");
+
+            DFA<string> dfa2 = AutomataConverter.ToMinimalDFA(dfa);
+
+            Graphiz<string> graphiz2 = new Graphiz<string>(dfa2);
+            graphiz.PrintGraph("dfa2");
         }
     }
 }

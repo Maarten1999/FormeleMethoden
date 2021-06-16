@@ -45,5 +45,15 @@ namespace FormeleMethodenCS
             return ndfa;
         }
 
+        //Brzozowski's algorithm: toDFA (reverse (toDFA (reverse (dfa)))
+        public static DFA<string> ToMinimalDFA(DFA<string> dfa)
+        {
+            NDFA<string> ndfa1 = DFAToNDFA_Reverse(dfa);
+            DFA<string> dfa1 = NDFAToDFA(ndfa1);
+            NDFA<string> ndfa2 = DFAToNDFA_Reverse(dfa1);
+            DFA<string> dfa2 = NDFAToDFA(ndfa2);
+            return dfa2;
+        }
+
     }
 }
