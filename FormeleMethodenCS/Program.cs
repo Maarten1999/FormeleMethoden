@@ -11,8 +11,9 @@ namespace FormeleMethodenCS
     {
         static void Main(string[] args)
         {
-            TestToMinimalDFA();
-//            TestRegex();
+            //TestToMinimalDFA();
+            //            TestRegex();
+            TestDFAOperations();
             Console.ReadLine();
             
             //var x = dfa.GetToStates("q4", 'a');
@@ -23,6 +24,61 @@ namespace FormeleMethodenCS
             //Console.ReadLine();
         }
 
+        static void TestDFAOperations()
+        {
+            char[] alphabet = { 'a', 'b' };
+
+            DFA<string> dfa = new DFA<string>(alphabet);
+            dfa.AddTransition(new Transition<string>("1", 'a', "2"));
+            dfa.AddTransition(new Transition<string>("1", 'b', "1"));
+
+            dfa.AddTransition(new Transition<string>("2", 'a', "2"));
+            dfa.AddTransition(new Transition<string>("2", 'b', "3"));
+
+            dfa.AddTransition(new Transition<string>("3", 'a', "4"));
+            dfa.AddTransition(new Transition<string>("3", 'b', "1"));
+
+            dfa.AddTransition(new Transition<string>("4", 'a', "4"));
+            dfa.AddTransition(new Transition<string>("4", 'b', "4"));
+
+            dfa.DefineAsStartState("1");
+            dfa.DefineAsFinalState("4");
+
+
+            DFA<string> other = new DFA<string>(alphabet);
+            other.AddTransition(new Transition<string>("1", 'a', "1"));
+            other.AddTransition(new Transition<string>("1", 'b', "2"));
+
+            other.AddTransition(new Transition<string>("2", 'a', "3"));
+            other.AddTransition(new Transition<string>("2", 'b', "2"));
+
+            other.AddTransition(new Transition<string>("3", 'a', "1"));
+            other.AddTransition(new Transition<string>("3", 'b', "4"));
+
+            other.AddTransition(new Transition<string>("4", 'a', "3"));
+            other.AddTransition(new Transition<string>("4", 'b', "2"));
+
+            other.DefineAsStartState("1");
+            other.DefineAsFinalState("1");
+            other.DefineAsFinalState("2");
+            other.DefineAsFinalState("3");
+
+            var newDfa = dfa.Or(other);
+            Graphiz<string> graphiz = new Graphiz<string>(newDfa);
+            graphiz.PrintGraph();
+           
+            return;
+            dfa = dfa.Not();
+            do
+            {
+                Console.Clear();
+                Console.Write("Geef string: ");
+                string s = Console.ReadLine();
+                bool success = dfa.Accept(s);
+                Console.WriteLine($"String geaccepteerd: {success}");
+                Console.WriteLine("Druk op esc om te stoppen.");
+            } while (Console.ReadKey().Key != ConsoleKey.Escape);
+        }
         static void TestDFA()
         {
             char[] alphabet = { 'a', 'b' };
