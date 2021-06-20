@@ -69,6 +69,21 @@ namespace FormeleMethodenCS
         {
             int length = a.States.Count;
 
+//            IEnumerable<string> language = GetLanguage(length, true);
+//            IEnumerable<string> alanguage = a.GetLanguage(length, true);
+//
+//            foreach (var s in language)
+//            {
+//                Console.Write(s + ", ");
+//            }
+//            Console.WriteLine();
+//            foreach (var s in alanguage)
+//            {
+//                Console.Write(s + ", ");
+//            }
+//            Console.WriteLine();
+//
+//            return language.SequenceEqual(alanguage);
             return GetLanguage(length, true).SequenceEqual(a.GetLanguage(length, true));
         }
         

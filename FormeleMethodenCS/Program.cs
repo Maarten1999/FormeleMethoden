@@ -75,6 +75,10 @@ namespace FormeleMethodenCS
                     default:
                         break;
                 }
+                Console.WriteLine("");
+                Console.WriteLine("--------------------------------");
+                Console.WriteLine("Press any key to return to menu");
+                Console.ReadKey();
             }
 
             //TestToMinimalDFA();
@@ -519,17 +523,18 @@ namespace FormeleMethodenCS
 
             // Bevat 'abb' of bevat 'ba'
             NDFA<string> ndfa = new NDFA<string>(alphabet);
-            ndfa.AddTransition(new Transition<string>("q0", 'a', "q0"));
+//            ndfa.AddTransition(new Transition<string>("q0", 'a', "q0"));
             ndfa.AddTransition(new Transition<string>("q0", 'a', "q1"));
-            ndfa.AddTransition(new Transition<string>("q0", 'b', "q0"));
+//            ndfa.AddTransition(new Transition<string>("q0", 'b', "q0"));
             ndfa.AddTransition(new Transition<string>("q0", 'b', "q4"));
 
             ndfa.AddTransition(new Transition<string>("q1", 'b', "q2"));
 
             ndfa.AddTransition(new Transition<string>("q2", 'b', "q3"));
 
-            ndfa.AddTransition(new Transition<string>("q3", 'a', "q3"));
-            ndfa.AddTransition(new Transition<string>("q3", 'b', "q3"));
+//            ndfa.AddTransition(new Transition<string>("q3", 'a', "q3"));
+//            ndfa.AddTransition(new Transition<string>("q3", 'b', "q3"));
+            ndfa.AddTransition(new Transition<string>("q3", "q0"));
 
             ndfa.AddTransition(new Transition<string>("q4", 'a', "q3"));
 
