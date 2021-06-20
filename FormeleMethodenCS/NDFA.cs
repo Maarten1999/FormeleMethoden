@@ -22,13 +22,9 @@ namespace FormeleMethodenCS
 
         public bool EqualsDFA(DFA<T> dfa)
         {
-            int transitionCount = 3;
+            int length = dfa.States.Count;
 
-           List<string> x = GetLanguage(transitionCount, true).ToList();
-            List<string> y = dfa.GetLanguage(transitionCount, true).ToList();
-            var z  = Accept("aba");
-            //bool result = GetLanguage(transitionCount, true).SequenceEqual(dfa.GetLanguage(transitionCount, true));
-            return z;
+            return GetLanguage(length, true).SequenceEqual(dfa.GetLanguage(length, true));
         }
         public override void DefineAsStartState(T t)
         {
