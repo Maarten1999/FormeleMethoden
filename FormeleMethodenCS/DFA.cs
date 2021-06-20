@@ -6,170 +6,196 @@ using System.Threading.Tasks;
 
 namespace FormeleMethodenCS
 {
-    class DFA<T> where T : IComparable
+    public class DFA<T> : Automata<T> where T : IComparable
     {
-        //public T startState;
-        //public SortedSet<T> finalStates;
-        //public SortedList<KeyValuePair<T, char>, T> transTable;
-        public readonly List<Transition<T>> transitions;
-        public readonly SortedSet<T> states;
-        public T startState;
-        public readonly SortedSet<T> finalStates;
-        private SortedSet<char> symbols;
-
-        public DFA() : this(new SortedSet<char>()) { }
-        public DFA(char[] symbols) : this(new SortedSet<char>(symbols)) { }
-        public DFA(SortedSet<char> symbols)
+        public DFA()
         {
-            transitions = new List<Transition<T>>();
-            states = new SortedSet<T>();
-            finalStates = new SortedSet<T>();
-            SetAlphabet(symbols);
         }
 
-        private void SetAlphabet(SortedSet<char> symbols)
+        public DFA(char[] symbols) : base(symbols)
         {
-            this.symbols = symbols;
         }
 
-
-        public void AddTransition(Transition<T> t)
+        public DFA(SortedSet<char> symbols) : base(symbols)
         {
-            transitions.Add(t);
-            states.Add(t.SourceState);
-            states.Add(t.DestState);
         }
 
-        public void DefineAsStartState(T t)
+        public override void DefineAsStartState(T t)
         {
-            states.Add(t);
-            startState = t;
+            States.Add(t);
+            StartStates.Clear();
+            StartStates.Add(t);
         }
 
-        public void DefineAsFinalState(T t)
+        public override bool Accept(string s)
         {
-            states.Add(t);
-            finalStates.Add(t);
-        }
-        public void PrintTransitions()
-        {
-            foreach (var t in transitions)
-            {
-                Console.WriteLine(t);
-            }
-        }
-
-        public void PrintStates()
-        {
-            states.ToList().ForEach(s => Console.WriteLine(s));
-        }
-
-        public bool Accept(string s)
-        {
-            T curState = startState;
+            T curState = StartStates.First();
 
             foreach (char c in s)
             {
-                var transition = transitions.Find(t => t.SourceState.Equals(curState) && t.Symbol == c);
+                var transition = Transitions.Find(t => t.SourceState.Equals(curState) && t.Symbol == c);
                 if (transition == null)
                     return false;
                 curState = transition.DestState;
             }
 
-            return finalStates.Contains(curState);
+            return FinalStates.Contains(curState);
         }
 
         /// <summary>
-        /// Geeft alle mogelijke woorden met het alfabet en de ingegeven lengte.
+        /// Niet operatie.
+        /// Omdraaiing in finalstates.
         /// </summary>
-        /// <param name="length">Lengte van woorden.</param>
-        /// <param name="accepts">Of de woorden geaccepteerd moeten worden.</param>
-        /// <returns></returns>
-        public IEnumerable<string> GetLanguage(int length, bool accepts = false)
+        /// <returns>Nieuwe DFA instantie</returns>
+        public DFA<T> Not()
         {
-            var permutations = GetPermutations(symbols, length);
-            foreach (var i in permutations)
-            {
-                string word = new string(i.ToArray());
+            DFA<T> copy = this;
+            SortedSet<T> newFinalStates = 
+                new SortedSet<T>(copy.States.Where(s => !copy.FinalStates.Contains(s)));
 
-                if ((accepts && Accept(word)) || !accepts)
-                    yield return word;
-            }
+            copy.FinalStates.Clear();
+            copy.FinalStates.AddAll(newFinalStates);
+
+            return copy;
         }
 
         /// <summary>
-        /// Recursieve functie voor het berekenen van alle mogelijke combinatie's gegeven een lengte.
+        /// Creeërt een tabel.
         /// </summary>
-        /// <typeparam name="U"></typeparam>
-        /// <param name="list">Lijst met items.</param>
-        /// <param name="length">Lengte van combinaties.</param>
+        /// <param name="transitions"></param>
         /// <returns></returns>
-        private static IEnumerable<IEnumerable<U>> GetPermutations<U>(IEnumerable<U> list, int length)
+        private Dictionary<T, Dictionary<char, T>> CreateTable(List<Transition<T>> transitions)
         {
-            if (length == 1) return list.Select(t => new U[] { t });
-            return GetPermutations(list, length - 1)
-                .SelectMany(t => list,
-                    (t1, t2) => t1.Concat(new U[] { t2 }));
-        }
+            Dictionary<T, Dictionary<char, T>> table = new Dictionary<T, Dictionary<char, T>>();
 
-        public IEnumerable<T> GetToStates(T source, char symbol)
-        {
-            foreach (Transition<T> transition in transitions)
+            foreach (var transition in transitions)
             {
-                if (transition.SourceState.Equals(source) && transition.Symbol.Equals(symbol))
-                    yield return transition.DestState;
+                var val = new Dictionary<char, T>();
+                val.Add(transition.Symbol, transition.DestState);
+
+                if (table.ContainsKey(transition.SourceState))
+                {
+                    table[transition.SourceState].Add(transition.Symbol, transition.DestState);
+                }
+                else table.Add(transition.SourceState, val);
             }
+            return table;
         }
 
-        //public void Recursive(T startState, int steps)
-        //{
-        //    var startTransitions = transitions.Where(t => t.SourceState.Equals(startState));
+        private Dictionary<string, Dictionary<char, string>> CreateCombinedTable(Dictionary<T, Dictionary<char, T>> L1, Dictionary<T, Dictionary<char, T>> L2)
+        {
+            Dictionary<string, Dictionary<char, string>> L3 = new Dictionary<string, Dictionary<char, string>>();
 
-        //    foreach (Transition<T> transition in startTransitions)
-        //    {
-        //        int count = steps;
-        //        string word = "";
-        //        for (int i = 0; i < steps; i++)
-        //        {
-        //            transition.
-        //        }
-        //    }
+            foreach (var table1 in L1)
+            {
+                foreach (var table2 in L2)
+                {
+                    Dictionary<char, string> value = new Dictionary<char, string>();
+                    foreach (char c in symbols)
+                    {
+                        value.Add(c, $"q{table1.Value[c]}q{table2.Value[c]}");
+                    }
+                    L3.Add($"q{table1.Key}q{table2.Key}", value);
+                }
+            }
 
-        //}
-        //public List<string> GetTest(int steps)
-        //{
-        //    HashSet<Transition<T>> processed = new HashSet<Transition<T>>();
-        //    List<Transition<T>> unCheckedTransitions = new List<Transition<T>>(transitions);
+            return L3;
+        }
 
-        //    var startTransitions = transitions.Where(t => t.SourceState.Equals(startState));
+        /// <summary>
+        /// Creeër transities aan de hand van een gecombineerde tabel (L3)
+        /// </summary>
+        /// <param name="L3"></param>
+        /// <returns></returns>
+        private DFA<string> CreateTableTransitions(Dictionary<string, Dictionary<char, string>> L3)
+        {
+            DFA<string> result = new DFA<string>();
 
-        //    List<string> words = new List<string>();
-        //    foreach (var t in startTransitions)
-        //    {
-        //        Transition<T> current = t;
-        //        string word = "";
-        //        for (int i = 0; i < (steps); i++)
-        //        {
-        //            T destState = current.DestState;
-        //            word += current.Symbol;
-        //            var trans = transitions.Find(x => x.SourceState.Equals(destState));
-        //            current = trans;
-        //        }
-        //        words.Add(word);
-        //    }
-        //    return words;
-        //    //Transition<T> current = transition;
-        //    //string word = "";
-        //    //for (int i = 0; i < (steps-1); i++)
-        //    //{
-        //    //    T destState = current.DestState;
-        //    //    word += current.Symbol;
-        //    //    var trans = transitions.Find(t => t.SourceState.Equals(destState));
-        //    //    current = trans;
-        //    //    //processed.Add(trans);
-        //    //}
+            // Creeër dfa transitaties aan de hand van de tabel L3
+            foreach (var item in L3)
+            {
+                foreach (var val in item.Value)
+                {
+                    result.AddTransition(new Transition<string>(item.Key, val.Key, val.Value));
+                }
+            }
 
+            return result;
+        }
+        /// <summary>
+        /// En operatie.
+        /// </summary>
+        /// <param name="dfa"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns></returns>
+        public DFA<string> And(DFA<T> dfa)
+        {
+            if (!symbols.SetEquals(dfa.symbols)) throw new ArgumentException("Alphabet is not the same.");
 
-        //}
+            Dictionary<T, Dictionary<char, T>> L1 = CreateTable(Transitions);
+            Dictionary<T, Dictionary<char, T>> L2 = CreateTable(dfa.Transitions);
+
+            //foreach (var res in L3)
+            //{
+            //    Console.WriteLine($"{res.Key} -> a = {res.Value['a']} - b = {res.Value['b']}");
+            //}
+
+            // Gecombineerde tabel van L1 en L2
+            Dictionary<string, Dictionary<char, string>> L3 = CreateCombinedTable(L1, L2);
+
+            DFA<string> result = CreateTableTransitions(L3);
+
+            // Start state is waar beide tabellen beginnen (combinatie)
+            result.DefineAsStartState($"q{StartStates.First()}q{dfa.StartStates.First()}");
+            foreach (var itemL1 in L1)
+            {
+                if (FinalStates.Contains(itemL1.Key))
+                {
+                    foreach (var itemL2 in L2)
+                    {
+                        if (dfa.FinalStates.Contains(itemL2.Key))
+                        {
+                            result.DefineAsFinalState($"q{itemL1.Key}q{itemL2.Key}");
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Of operatie.
+        /// </summary>
+        /// <param name="dfa"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns></returns>
+        public DFA<string> Or(DFA<T> dfa)
+        {
+            if (!symbols.SetEquals(dfa.symbols)) throw new ArgumentException("Alphabet is not the same.");
+
+            Dictionary<T, Dictionary<char, T>> L1 = CreateTable(Transitions);
+            Dictionary<T, Dictionary<char, T>> L2 = CreateTable(dfa.Transitions);
+
+            Dictionary<string, Dictionary<char, string>> L3 = CreateCombinedTable(L1, L2);
+
+            DFA<string> result = CreateTableTransitions(L3);
+
+            result.DefineAsStartState($"q{StartStates.First()}q{dfa.StartStates.First()}");
+
+            foreach (var itemL1 in L1)
+            {
+                foreach (var itemL2 in L2)
+                {
+                    if (FinalStates.Contains(itemL1.Key) || dfa.FinalStates.Contains(itemL2.Key))
+                    {
+                        result.DefineAsFinalState($"q{itemL1.Key}q{itemL2.Key}");
+                    }
+                }
+            }
+
+            return result;
+        }
+
     }
 }

@@ -7,36 +7,29 @@ using System.Threading.Tasks;
 
 namespace FormeleMethodenCS
 {
-    class Graphiz
+    class Graphiz<T> where T : IComparable
     {
         private readonly string Title;
         private readonly List<Node> nodes;
         private readonly List<Edge> edges;
 
-        public Graphiz(NDFA<string> ndfa)
+        public Graphiz(Automata<T> a)
         {
-            Title = "ndfa";
+            Title = a.GetType().Equals(typeof(DFA<T>)) ? "DFA" : "NDFA";
             nodes = new List<Node>();
             edges = new List<Edge>();
-            LoadNDFA(ndfa);
-        }
-
-        public Graphiz(DFA<string> dfa)
-        {
-            Title = "dfa";
-            nodes = new List<Node>();
-            edges = new List<Edge>();
-            LoadDFA(dfa);
+            Load(a);
         }
 
 
         // Print Graph to a .gv file
         // Run: 'dot -Tpng < dfa.gv > dfa.png' in CMD to generate PNG file
-        public bool PrintGraph()
+        public bool PrintGraph(string title = null)
         {
+            string graphTitle = (title is null) ? Title : title;
             List<string> lines = new List<string>(
                 new string[] {
-                    "digraph " + Title + " {",
+                    "digraph " + graphTitle + " {",
                     "rankdir = LR;"
             });
 
@@ -53,33 +46,32 @@ namespace FormeleMethodenCS
             lines.Add("}");
 
             Directory.CreateDirectory("graphiz");
-            File.WriteAllLines(Directory.GetCurrentDirectory() + "\\graphiz\\" + Title +".gv", lines.ToArray());
+            File.WriteAllLines(Directory.GetCurrentDirectory() + "\\graphiz\\" + graphTitle +".gv", lines.ToArray());
             return true;
         }
 
-        private void LoadNDFA(NDFA<string> ndfa)
+        private void Load(Automata<T> automata)
         {
-            
             // Convert states
-            foreach (var s in ndfa.states)
+            foreach (var s in automata.States)
             {
-                nodes.Add(new Node(Node.Shape.circle, s));
+                nodes.Add(new Node(Node.Shape.circle, s.ToString()));
             }
 
             // Convert start states
-            foreach (var ss in ndfa.startStates)
+            foreach (var ss in automata.StartStates)
             {
-                var start_node = new Node(Node.Shape.none, ss + "_start", true);
-                var node = new Node(Node.Shape.circle, ss);
+                var start_node = new Node(Node.Shape.none, ss.ToString() + "_start", true);
+                var node = new Node(Node.Shape.circle, ss.ToString());
                 nodes.Add(start_node);
                 nodes.Add(node);
                 edges.Add(new Edge(start_node.Label, node.Label));
             }
 
             // Convert final states
-            foreach (var fs in ndfa.finalStates)
+            foreach (var fs in automata.FinalStates)
             {
-                var node = new Node(Node.Shape.doublecircle, fs);
+                var node = new Node(Node.Shape.doublecircle, fs.ToString());
                 if (nodes.Contains(node))
                 {
                     nodes.Remove(node);
@@ -88,44 +80,80 @@ namespace FormeleMethodenCS
             }
 
             // Convert transitions 
-            foreach (var t in ndfa.transitions)
+            foreach (var t in automata.Transitions)
             {
-                edges.Add(new Edge(t.SourceState, t.DestState, t.Symbol));
+                edges.Add(new Edge(t.SourceState.ToString(), t.DestState.ToString(), t.Symbol));
             }
         }
-
-        private void LoadDFA(DFA<string> dfa)
-        {
-            // Convert states
-            foreach (var s in dfa.states)
-            {
-                nodes.Add(new Node(Node.Shape.circle, s));
-            }
-
-            // Convert start state
-            var pre_startnode = new Node(Node.Shape.none, dfa.startState + "_start", true);
-            var startnode = new Node(Node.Shape.circle, dfa.startState);
-            nodes.Add(pre_startnode);
-            nodes.Add(startnode);
-            edges.Add(new Edge(pre_startnode.Label, startnode.Label));
+        //private void LoadNDFA(NDFA<string> ndfa)
+        //{
             
-            // Convert final states
-            foreach (var fs in dfa.finalStates)
-            {
-                var node = new Node(Node.Shape.doublecircle, fs);
-                if (nodes.Contains(node))
-                {
-                    nodes.Remove(node);
-                }
-                nodes.Add(node);
-            }
+        //    // Convert states
+        //    foreach (var s in ndfa.states)
+        //    {
+        //        nodes.Add(new Node(Node.Shape.circle, s));
+        //    }
 
-            // Convert transitions
-            foreach (var t in dfa.transitions)
-            {
-                edges.Add(new Edge(t.SourceState, t.DestState, t.Symbol));
-            }
-        }
+        //    // Convert start states
+        //    foreach (var ss in ndfa.startStates)
+        //    {
+        //        var start_node = new Node(Node.Shape.none, ss + "_start", true);
+        //        var node = new Node(Node.Shape.circle, ss);
+        //        nodes.Add(start_node);
+        //        nodes.Add(node);
+        //        edges.Add(new Edge(start_node.Label, node.Label));
+        //    }
+
+        //    // Convert final states
+        //    foreach (var fs in ndfa.finalStates)
+        //    {
+        //        var node = new Node(Node.Shape.doublecircle, fs);
+        //        if (nodes.Contains(node))
+        //        {
+        //            nodes.Remove(node);
+        //        }
+        //        nodes.Add(node);
+        //    }
+
+        //    // Convert transitions 
+        //    foreach (var t in ndfa.transitions)
+        //    {
+        //        edges.Add(new Edge(t.SourceState, t.DestState, t.Symbol));
+        //    }
+        //}
+
+        //private void LoadDFA(DFA<string> dfa)
+        //{
+        //    // Convert states
+        //    foreach (var s in dfa.States)
+        //    {
+        //        nodes.Add(new Node(Node.Shape.circle, s));
+        //    }
+        //    var startState = dfa.StartStates.First();
+        //    // Convert start state
+        //    var pre_startnode = new Node(Node.Shape.none, startState + "_start", true);
+        //    var startnode = new Node(Node.Shape.circle, startState);
+        //    nodes.Add(pre_startnode);
+        //    nodes.Add(startnode);
+        //    edges.Add(new Edge(pre_startnode.Label, startnode.Label));
+            
+        //    // Convert final states
+        //    foreach (var fs in dfa.FinalStates)
+        //    {
+        //        var node = new Node(Node.Shape.doublecircle, fs);
+        //        if (nodes.Contains(node))
+        //        {
+        //            nodes.Remove(node);
+        //        }
+        //        nodes.Add(node);
+        //    }
+
+        //    // Convert transitions
+        //    foreach (var t in dfa.Transitions)
+        //    {
+        //        edges.Add(new Edge(t.SourceState, t.DestState, t.Symbol));
+        //    }
+        //}
 
         class Node : IComparer<Node>
         {
