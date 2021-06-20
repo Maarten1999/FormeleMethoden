@@ -13,13 +13,14 @@ namespace FormeleMethodenCS
 
         public Operator @operator { get; set; }
         string Terminals { get; set; }
-
         public RegExp Left {get; set;}
         public RegExp Right { get; set; }
 
+        string regString;
         public RegExp()
         {
             @operator = Operator.ONE;
+            Terminals = "";
         }
 
         public RegExp(string Terminals) : this()
@@ -33,6 +34,7 @@ namespace FormeleMethodenCS
             result.@operator = Operator.DOLLAR;
             result.Left = this;
             result.Terminals = this.Terminals + "$";
+            regString = this.Terminals + "$";
             return result;
         }
 
@@ -42,6 +44,7 @@ namespace FormeleMethodenCS
             result.@operator = Operator.CARET;
             result.Left = this;
             result.Terminals = "^" + this.Terminals;
+            regString = "^" + this.Terminals;
             return result;
         }
 
@@ -51,7 +54,7 @@ namespace FormeleMethodenCS
             result.@operator = Operator.PLUS;
             result.Left = this;
             result.Terminals = this.Terminals + "+";
-
+            regString = this.Terminals + "+";
             return result;
         }
         public RegExp Star()
@@ -60,6 +63,7 @@ namespace FormeleMethodenCS
             result.@operator = Operator.STAR;
             result.Left = this;
             result.Terminals = this.Terminals + "*";
+            regString = this.Terminals + "*";
             return result;
         }
 
@@ -70,6 +74,7 @@ namespace FormeleMethodenCS
             result.Left = this;
             result.Right = regExp;
             result.Terminals = this.Terminals + " | " + regExp.Terminals;
+            regString = this.Terminals + " | " + regExp.Terminals;
             return result;
         }
 
@@ -80,12 +85,13 @@ namespace FormeleMethodenCS
             result.Left = this;
             result.Right = regExp;
             result.Terminals = this.Terminals + " " + regExp.Terminals;
+            regString = this.Terminals + " " + regExp.Terminals;  
             return result;
         }
-
+        [Obsolete("Deprecated, geen accept nodig")]
         public bool Accept(string s)
         {
-            var set = GetLanguage(s.Length);
+            var set = GetLanguage(15);
             return set.Contains(s);
         }
         public SortedSet<string> GetLanguage(int length)
@@ -144,6 +150,17 @@ namespace FormeleMethodenCS
                     throw new NotImplementedException("Operator not implemented.");
             }
             return languageResult;
+        }
+
+        public bool EqualsNDFA(NDFA<string> ndfa)
+        {
+            NDFA<string> converted = AutomataConverter.RegexToNDFA(this);
+            return converted.Equivalent(ndfa);
+
+            //int transitionCount = ndfa.Transitions.Count;
+
+            //bool result = ndfa.GetLanguage(transitionCount, true).SequenceEqual(GetLanguage(transitionCount));
+            //return result;
         }
 
         public override string ToString()

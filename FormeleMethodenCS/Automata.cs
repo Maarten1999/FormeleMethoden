@@ -65,6 +65,13 @@ namespace FormeleMethodenCS
             States.ToList().ForEach(s => Console.WriteLine(s));
         }
 
+        public bool Equivalent(Automata<T> a)
+        {
+            int length = a.States.Count;
+
+            return GetLanguage(length, true).SequenceEqual(a.GetLanguage(length, true));
+        }
+        
 
         public IEnumerable<T> GetToStates(T source, char symbol)
         {
@@ -84,13 +91,16 @@ namespace FormeleMethodenCS
         /// <returns></returns>
         public IEnumerable<string> GetLanguage(int length, bool accepts = false)
         {
-            var permutations = GetPermutations(symbols, length);
-            foreach (var i in permutations)
+            for (int j = 1; j <= length; j++)
             {
-                string word = new string(i.ToArray());
+                var permutations = GetPermutations(symbols, j);
+                foreach (var i in permutations)
+                {
+                    string word = new string(i.ToArray());
 
-                if ((accepts && Accept(word)) || !accepts)
-                    yield return word;
+                    if ((accepts && Accept(word)) || !accepts)
+                        yield return word;
+                }
             }
         }
 

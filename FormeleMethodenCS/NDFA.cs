@@ -20,12 +20,13 @@ namespace FormeleMethodenCS
         {
         }
 
-        public bool EqualsDFA(DFA<T> dfa)
-        {
-            int length = dfa.States.Count;
+        //public bool EqualsDFA(Automata<T> a)
+        //{
+        //    int length = a.States.Count;
 
-            return GetLanguage(length, true).SequenceEqual(dfa.GetLanguage(length, true));
-        }
+        //    return GetLanguage(length, true).SequenceEqual(a.GetLanguage(length, true));
+        //}
+
         public override void DefineAsStartState(T t)
         {
             States.Add(t);
