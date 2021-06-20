@@ -20,53 +20,102 @@ namespace FormeleMethodenCS
         {
         }
 
+        public bool EqualsDFA(DFA<T> dfa)
+        {
+            int transitionCount = 3;
+
+           List<string> x = GetLanguage(transitionCount, true).ToList();
+            List<string> y = dfa.GetLanguage(transitionCount, true).ToList();
+            var z  = Accept("aba");
+            //bool result = GetLanguage(transitionCount, true).SequenceEqual(dfa.GetLanguage(transitionCount, true));
+            return z;
+        }
         public override void DefineAsStartState(T t)
         {
             States.Add(t);
             StartStates.Add(t);
         }
 
-        public override bool Accept(string s)
+        private bool Accept(T currentState, string s)
         {
-
-            foreach (T startState in StartStates)
+            if (s.Length > 0)
             {
-                T curState = startState;
-                bool abrupted = false;
-                
-                foreach (char c in s)
+                char c = s[0];
+                List<Transition<T>> transitions = Transitions.FindAll(t => t.SourceState.Equals(currentState) &&
+                                                                     (t.Symbol == c || t.Symbol == Transition<T>.EPSILON));
+
+                foreach (Transition<T> transition in transitions)
                 {
-                    bool transition_found = false;
-                    do
+                    if (Accept(transition.DestState, (transition.Symbol != Transition<T>.EPSILON) ? s.Substring(1) : s))
                     {
-                        var transition = Transitions.Find(t => t.SourceState.Equals(curState) && t.Symbol == c);
-                        var transition_epsilon = Transitions.Find(t => t.SourceState.Equals(curState) && t.Symbol == Transition<T>.EPSILON);
-
-                        if (transition != null)
-                        {
-                            transition_found = true;
-                            curState = transition.DestState;
-                        }
-                        else if (transition_epsilon != null)
-                        {
-                            curState = transition_epsilon.DestState;
-                        }
-                        else
-                        {
-                            abrupted = true;
-                            break;
-                        }
-
-                    } while (!transition_found);
+                        return true;
+                    }
                 }
+                return false;
+            }
+            else
+            {
+                List<Transition<T>> epTransitions = Transitions.FindAll(t => t.SourceState.Equals(currentState) && t.Symbol == Transition<T>.EPSILON);
 
-                if (FinalStates.Contains(curState) && !abrupted)
+                foreach (Transition<T> transition in epTransitions)
                 {
-                    return true;
+                    if (Accept(transition.DestState, s))
+                    {
+                        return true;
+                    }
                 }
             }
-      
+
+            return FinalStates.Contains(currentState);
+        }
+        public override bool Accept(string s)
+        {
+            foreach (T startState in StartStates)
+            {
+                if (Accept(startState, s))
+                    return true;
+            }
             return false;
+            #region OLDCODE
+            //foreach (T startState in StartStates)
+            //{
+            //    T curState = startState;
+            //    bool abrupted = false;
+
+            //    foreach (char c in s)
+            //    {
+            //        bool transition_found = false;
+            //        do
+            //        {
+            //            var transition = Transitions.Find(t => t.SourceState.Equals(curState) && t.Symbol == c);
+            //            var transition_epsilon = Transitions.Find(t => t.SourceState.Equals(curState) && t.Symbol == Transition<T>.EPSILON);
+
+            //            if (transition != null)
+            //            {
+            //                transition_found = true;
+            //                curState = transition.DestState;
+            //            }
+            //            else if (transition_epsilon != null)
+            //            {
+            //                curState = transition_epsilon.DestState;
+            //            }
+            //            else
+            //            {
+            //                abrupted = true;
+            //                break;
+            //            }
+
+            //        } while (!transition_found);
+            //    }
+
+            //    if (FinalStates.Contains(curState) && !abrupted)
+            //    {
+            //        return true;
+            //    }
+            //}
+
+            //return false;
+            #endregion
         }
 
         //public IEnumerable<T> GetToStates(T source, char symbol)
